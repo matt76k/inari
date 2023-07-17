@@ -29,8 +29,8 @@ poetry install
 poetry run python preprocess/create_dataset_categorical.py
 ```
 
-一番簡単なsubGMNを動かしてみます。
+あるモデルでCOX2を学習してみます。
 
 ```
-poetry run python src/simplesubgmn.py
+poetry run python src/train_cox2.py
 ```

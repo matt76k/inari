@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from inari.data import MyDataset, prepare_data_for_subgraph_task
 from inari.loss import MMLoss
-from inari.model import SimpleSubGMN
+from inari.model import SimpleSubGMN, SubGMN
 from inari.utils import fix_random_seed, metric_acc
 
 fix_random_seed(42)
@@ -20,6 +20,7 @@ train_loader = DataLoader(train_set, batch_size=32, shuffle=True, collate_fn=pre
 val_loader = DataLoader(val_set, batch_size=32, shuffle=False, collate_fn=prepare_data_for_subgraph_task)
 test_loader = DataLoader(test_set, batch_size=32, shuffle=False, collate_fn=prepare_data_for_subgraph_task)
 
+# model = SubGMN(num_features, 128, 8).to(device)
 model = SimpleSubGMN(num_features, 128).to(device)
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
