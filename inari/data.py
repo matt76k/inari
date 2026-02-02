@@ -10,7 +10,7 @@ from torch_geometric.data import Batch
 class MyDataset(Dataset):
     def __init__(self, root, num_features):
         super().__init__()
-        self.target, self.query, self.mm = torch.load(root)
+        self.target, self.query, self.mm = torch.load(root, weights_only=False)
 
         self.num_features = num_features
 

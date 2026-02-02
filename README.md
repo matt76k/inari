@@ -10,27 +10,27 @@ GNNのモデルを比較するためのライブラリ
 Getting Started
 ===============
 
-poetryをインストールします。
-[poetry](https://python-poetry.org/docs/)のページを参考に、自分の環境に合った方法でインストールしてください。
+uvをインストールします。
+[uv](https://docs.astral.sh/uv/getting-started/installation/)のページを参考に、自分の環境に合った方法でインストールしてください。
 
 ```
-curl -sSL https://install.python-poetry.org | python -
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 inariを使えるようにするため、installします。
 
 ```
-poetry install
+uv sync
 ```
 
 次にデータセットの準備をします
 
 ```
-poetry run python preprocess/create_dataset_categorical.py
+uv run python preprocess/create_dataset_categorical.py
 ```
 
 あるモデルでCOX2を学習してみます。
 
 ```
-poetry run python src/train_cox2.py
+uv run python src/train_cox2.py
 ```
