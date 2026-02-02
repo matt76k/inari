@@ -32,5 +32,5 @@ uv run python preprocess/create_dataset_categorical.py
 あるモデルでCOX2を学習してみます。
 
 ```
-uv run python src/train_cox2.py
+uv run python scripts/train_cox2.py
 ```

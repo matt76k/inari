@@ -39,6 +39,9 @@ known-third-party = ["torch", "torch_geometric", "einops", "networkx", "numpy", 
 [tool.mypy]
 ignore_missing_imports = true
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/inari"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
