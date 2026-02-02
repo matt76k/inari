@@ -10,7 +10,7 @@ from inari.utils import fix_random_seed, metric_acc
 
 fix_random_seed(42)
 
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
 num_features = 35
 dataset = MyDataset("data/cox2.pt", num_features)
@@ -61,6 +61,7 @@ for epoch in pbar:
         with torch.no_grad():
             target = target.to(device)
             query = query.to(device)
+            mm = mm.to(device)
             mask = mask.to(device)
 
             output = model(target, query, mask)
