@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from inari.data import MyDataset, prepare_data_for_subgraph_task
 from inari.loss import MMLoss
-from inari.model import SimpleSubGMN, SubGMN
+from inari.model import SimpleSubGMN
 from inari.utils import fix_random_seed, metric_acc
 
 fix_random_seed(42)

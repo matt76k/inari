@@ -1,5 +1,3 @@
-from typing import Optional
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,7 +12,7 @@ class GlobalAttentionPooling(nn.Module):
         self.gate_nn = gate_nn
         self.feat_nn = feat_nn
 
-    def forward(self, x, batch, size: Optional[int] = None) -> Tensor:
+    def forward(self, x, batch, size: int | None = None) -> Tensor:
         gate = F.softmax(self.gate_nn(x), dim=1)
         feat = self.feat_nn(x) if self.feat_nn else x
 
@@ -47,12 +45,12 @@ class MultiHeadAttention(nn.Module):
         k = torch.matmul(k, self.K)
         v = torch.matmul(v, self.V)
 
-        att = torch.matmul(k, torch.permute(q, (0, 2, 1)))
-        fmask = mask.to(torch.float32)
+        att = torch.matmul(k, q.transpose(1, 2))
+        fmask = mask.float()
         dim = q.size(1)
         att *= fmask
         att = att / (dim**0.5)
-        att += -1e9 * (~mask).to(torch.float32)
+        att += -1e9 * (~mask).float()
         att = F.softmax(att, dim=2)
 
         att = rearrange(torch.matmul(att, v), "heads n d -> n (heads d)")
@@ -66,13 +64,13 @@ class SimpleMM(nn.Module):
         self.dim = dim
 
     def forward(self, embed_t: Tensor, embed_q: Tensor, mask: BoolTensor) -> Tensor:
-        fmask = mask.to(torch.float32)
+        fmask = mask.float()
 
         dim = embed_t.size(1)
         att = torch.mm(embed_q, embed_t.T)
         att *= fmask
         att = att / (dim**0.5)
-        att += -1e9 * (~mask).to(torch.float32)
+        att += -1e9 * (~mask).float()
         att = F.softmax(att, dim=1)
 
         return att
@@ -94,11 +92,11 @@ class AffinityMM(nn.Module):
         att = torch.mm(embed_t, self.W)
         att = torch.mm(embed_q, att.T)
 
-        fmask = mask.to(torch.float32)
+        fmask = mask.float()
 
         att *= fmask
         att = att / self.tau
-        att += -1e9 * (~mask).to(torch.float32)
+        att += -1e9 * (~mask).float()
         att = F.softmax(att, dim=1)
 
         return att

@@ -4,7 +4,7 @@ import resource
 import shutil
 import subprocess
 from tempfile import NamedTemporaryFile
-from typing import IO, Dict, Optional, Tuple
+from typing import IO
 
 import networkx as nx
 import numpy as np
@@ -58,7 +58,7 @@ def mk_matching_matrix_vf3(target: Data, query: Data, feature: str = "x", timeou
                     y, x = map(int, xy.split(","))
                     matching_matrix[c, x, y] = 1.0
             return matching_matrix
-        except Exception as e:
+        except (subprocess.TimeoutExpired, subprocess.SubprocessError, ValueError) as e:
             print(e)
             return None
 
@@ -117,7 +117,7 @@ def gen_subgraph(graph: Data, min_ratio: float = 0.5, max_ratio: float = 0.7) ->
             return last
 
 
-def k_subgraph(graph: Data, num_nodes_s: int = 10, node_idx: Optional[int] = None) -> Data:
+def k_subgraph(graph: Data, num_nodes_s: int = 10, node_idx: int | None = None) -> Data:
     if node_idx is None:
         node_idx = random.randint(0, graph.num_nodes - 1)
 
@@ -167,7 +167,7 @@ def gen_not_subgraph(d: Data, ratio: float = 0.7) -> Data:
     edge_index = erdos_renyi_graph(num_nodes, edge_prob=0.2, directed=True)
     edge_index = remove_isolated_nodes(edge_index)[0]
 
-    x = d.x[random.sample(range(d.num_nodes), num_nodes)]
+    x = d.x[torch.randperm(d.num_nodes)[:num_nodes]]
 
     return Data(x=x, edge_index=edge_index)
 
@@ -205,7 +205,7 @@ def feature_trans_categorical(t: Data) -> Data:
     return t
 
 
-def feature_trans_numerical(t: Data) -> Tuple[Data, Dict[str, int]]:
+def feature_trans_numerical(t: Data) -> tuple[Data, dict[str, int]]:
     features = {}
     xs = []
     for x in map(str, t.x.tolist()):
@@ -216,6 +216,6 @@ def feature_trans_numerical(t: Data) -> Tuple[Data, Dict[str, int]]:
         else:
             xs.append(n)
 
-    t["numeric_x"] = torch.unsqueeze(torch.IntTensor(xs), 1)
+    t["numeric_x"] = torch.tensor(xs, dtype=torch.int32).unsqueeze(1)
 
     return t, features

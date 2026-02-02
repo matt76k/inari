@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 import torch
 from einops import reduce
 from torch import BoolTensor, Tensor
@@ -25,7 +23,7 @@ class MyDataset(Dataset):
         return t, q, mm
 
 
-def batch_mm(labels: List[Tensor]) -> Tuple[Tensor, BoolTensor]:
+def batch_mm(labels: list[Tensor]) -> tuple[Tensor, BoolTensor]:
     batch = []
     n, m = 0, 0
     for mm in labels:
@@ -45,7 +43,7 @@ def batch_mm(labels: List[Tensor]) -> Tuple[Tensor, BoolTensor]:
     return bmm, mask
 
 
-def prepare_data_for_subgraph_task(samples) -> Tuple[Batch, Batch, Tensor, BoolTensor]:
+def prepare_data_for_subgraph_task(samples) -> tuple[Batch, Batch, Tensor, BoolTensor]:
     t, q, labels = map(list, zip(*samples))
     target = Batch.from_data_list(t)
     query = Batch.from_data_list(q)

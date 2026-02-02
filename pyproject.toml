@@ -22,24 +22,19 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "flake8>=6.0.0,<7",
-    "black>=23.7.0,<25",
-    "isort>=5.12.0,<6",
-    "pyproject-flake8>=6.0.0.post1,<7",
+    "ruff>=0.9.0,<1",
     "mypy>=1.4.1,<2",
 ]
 
-[tool.flake8]
-extend-ignore = "E203,E501,"
-
-[tool.black]
+[tool.ruff]
 line-length = 120
-target-version = ['py310']
+target-version = "py310"
 
-[tool.isort]
-py_version = 310
-line_length = 120
-profile = "black"
+[tool.ruff.lint]
+ignore = ["E203", "E501"]
+
+[tool.ruff.lint.isort]
+known-third-party = ["torch", "torch_geometric", "einops", "networkx", "numpy", "pandas", "scipy", "sklearn"]
 
 [tool.mypy]
 ignore_missing_imports = true

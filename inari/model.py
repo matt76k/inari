@@ -7,13 +7,13 @@ from .layers import NTN, SimpleMM
 
 
 def get_att(embed_t, embed_q, mask):
-    fmask = mask.to(torch.float32)
+    fmask = mask.float()
 
     dim = embed_t.size(1)
     att = torch.mm(embed_q, embed_t.T)
     att *= fmask
     att = att / (dim**0.5)
-    att += -1e9 * (~mask).to(torch.float32)
+    att += -1e9 * (~mask).float()
     att = F.softmax(att, dim=1)
 
     return att
@@ -41,7 +41,7 @@ class SimpleSubGMN(nn.Module):
 
         mm = get_att(embed_t, embed_q, mask)
 
-        return torch.unsqueeze(mm, 0)
+        return mm.unsqueeze(0)
 
 
 class SubGMN(nn.Module):
@@ -57,7 +57,7 @@ class SubGMN(nn.Module):
 
         self.GCN = nn.ModuleList([SAGEConv(h_dim, h_dim) for _ in range(num_layers)])
         self.NTNs = nn.ModuleList([NTN(h_dim, k) for _ in range(num_layers)])
-        self.activation = [F.elu for _ in range(num_layers - 1)] + [F.sigmoid]  # なんで最後だけsigmoid
+        self.activation = [F.elu] * (num_layers - 1) + [F.sigmoid]  # なんで最後だけsigmoid
         self.last = nn.Conv2d(k * num_layers, 1, 1)
 
     def forward(self, target, query, mask):
@@ -75,7 +75,7 @@ class SubGMN(nn.Module):
 
         mm = torch.softmax(self.last(torch.cat(op_list)).squeeze(0), dim=1)
 
-        return torch.unsqueeze(mm, 0)
+        return mm.unsqueeze(0)
 
 
 class SubCrossGMN(nn.Module):
